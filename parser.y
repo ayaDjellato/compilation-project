@@ -1,3 +1,4 @@
+
 %{
 	#include <stdio.h>
 
@@ -13,7 +14,7 @@
 
 %token<int_val> PLUS MOIN MUL
 
-%token<int_val> OB CB OBC CBC COMMA SEMI AFF
+%token<int_val> OB CB OBC CBC COMMA SEMI AFF WHI IF ELSE RETURN
 
 %token<int_val> NB INT
 %token<d_val> FB DOUBLE
@@ -48,7 +49,7 @@ const: NB | FB;
 
 statements : statements statement | statement;
 
-statement : assigment SEMI | funcall SEMI | expression SEMI | functions| if_stat| while_stat;
+statement : assigment SEMI| expression SEMI | if_stat| while_stat;
 
 assigment: ID AFF expression;
 
@@ -66,16 +67,10 @@ expression:
 
 funcall: ID CBC params OBC SEMI;
 
-params: param|STRING| ;
-param : param COMMA expression | expression| ;
+params: param|STRING;
+param : param COMMA expression | expression;
 
-/* function definition */
 
-functions: functions function | function;
-function: function_start function_body;
-function_start: type ID OB param CB function_body;
-function_body: OBC declarations statements return_op CBC;
-return_op: RETURN expression SEMI | RETURN | ;
 
 /*if stat*/
 if_stat: IF OB expression CB if_body else;
@@ -90,16 +85,12 @@ while_body: OBC statements CBC SEMI;
 
 %%
 
-void yyerror(){
-	printf(stderr, "Syntax error at line %d\n", lineno);
-  	exit(1);
+int yyerror(char *s){
+	printf("%s\n",s);
+  	
 	
 }
-
-
-
-
-
-
-
+int main(void){
+	yyparse();
+}
 
