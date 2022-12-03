@@ -1,25 +1,26 @@
 %{
 	#include "parser.tab.h"
 	#include <stdio.h>
-
-
+	#include <stdlib.h>
+	
+	void yyerror();
 %}
 
 letters [a-zA-Z]
 digit [0-9]
 oprel <=|>=|>|<|==
+print [-~]
 
 id {letters}({letters}|{digit})
 Iconst "0"|[0-9]{digit}*
 Fconst "0"|{digit}*"."{digit}
-esp [ ]
+esp [ \t]+
 str    \"{print}*\"
 
 %%
-
+{esp}
 "int" {return INT;}
 "double" {return DOUBLE;}
-"\n" {return FIN;}
 "return" {return RETURN;}
 "if" {return IF;}
 "while" {return WHI;}
@@ -40,11 +41,11 @@ str    \"{print}*\"
 
 {oprel} {return ROP;}
 
-{Iconst} {yyval.integer=atoi(yytext); return(NB);}
-{Fconst} {yyval.val_float=atof(yytext); return(FB);}
-{id}	 {yylval.val_char=strdup(yytext);return(ID);}
-{str}    { yylval.str_val = malloc(yyleng * sizeof(char));
-              strcpy(yylval.str_val, yytext);  return STRING; }
+{Iconst} {yylval.int_val=atoi(yytext); return(NB);}
+{Fconst} {yylval.d_val=atof(yytext); return(FB);}
+{id}	 {yylval.chain=strdup(yytext);return(ID);}
+{str}    { yylval.chain = malloc(yyleng * sizeof(char));
+              strcpy(yylval.chain, yytext);  return STRING; }
 
 . {yyerror("unrecognized character");}
 
